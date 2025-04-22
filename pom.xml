@@ -10,5 +10,6 @@
     <modules>
         <module>GeometryApp</module>
         <module>GeometryLibrary</module>
+        <module>GeometryCommons</module>
     </modules>
 </project>

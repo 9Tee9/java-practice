@@ -3,6 +3,10 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/GeometryApp/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/GeometryApp/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/GeometryCommons/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/GeometryCommons/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/GeometryLibrary/GeometryLibraryCore/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/GeometryLibrary/GeometryLibraryCore/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/GeometryLibrary/GeometryUtils/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/GeometryLibrary/GeometryUtils/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/GeometryLibrary/ThreeDimensionalShapes/src/main/java" charset="UTF-8" />

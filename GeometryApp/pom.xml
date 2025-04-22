@@ -12,7 +12,6 @@
     <artifactId>GeometryApp</artifactId>
     <packaging>jar</packaging>
 
-
     <properties>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
@@ -21,14 +20,23 @@
     <dependencies>
         <dependency>
             <groupId>com.polina.practice</groupId>
-            <artifactId>GeometryLibrary</artifactId>
+            <artifactId>GeometryLibraryCore</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.polina.practice</groupId>
+            <artifactId>ThreeDimensionalShapes</artifactId>
             <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.polina.practice</groupId>
             <artifactId>GeometryUtils</artifactId>
             <version>1.1.0</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.polina.practice</groupId>
+            <artifactId>GeometryCommons</artifactId>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 </project>

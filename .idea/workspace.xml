@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ddb1b70-d2fb-4f70-877f-967470d6cb13" name="Changes" comment="filter and count v1">
+    <list default="true" id="8ddb1b70-d2fb-4f70-877f-967470d6cb13" name="Changes" comment="Concurrency Task 3">
       <change afterPath="$PROJECT_DIR$/GeometryApp/pom.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/GeometryLibrary/GeometryUtils/pom.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/GeometryLibrary/GeometryUtils/src/main/java/com/polina/practice/GeometryClass.java" afterDir="false" />
@@ -61,15 +61,15 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="filter-and-count" />
+        <entry key="$PROJECT_DIR$" value="concurrency-task3" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -92,16 +92,22 @@
     "Maven.GeometryApp [clean].executor": "Run",
     "Maven.GeometryApp [install].executor": "Run",
     "Maven.GeometryApp [package].executor": "Run",
+    "Maven.java-practice [clean].executor": "Run",
+    "Maven.java-practice [install].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "maven",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Home-PC/Desktop/test-repository",
-    "onboarding.tips.debug.path": "C:/Users/Home-PC/Desktop/java-practice/GeometryLibrary/ThreeDemensionalShapes/src/main/java/com/polina-practice/Main.java",
+    "onboarding.tips.debug.path": "C:/Users/Home-PC/Desktop/java-practice/GeometryLibrary/GeometryLibraryCore/src/main/java/com/polina/practice/Main.java",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Home-PC\Desktop\java-practice\GeometryLibrary\GeometryLibraryCore" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.polina.practice.Main" />
@@ -116,8 +122,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="GeometryLibrary" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="GeometryLibrary" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -179,9 +199,14 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/GeometryLibrary/src/main/java/com/polina/practice/Main.java</url>
+          <url>file://$PROJECT_DIR$/GeometryLibrary/GeometryLibraryCore/src/main/java/com/polina/practice/Main.java</url>
           <line>13</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/GeometryLibrary/GeometryLibraryCore/src/main/java/com/polina/practice/Main.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
