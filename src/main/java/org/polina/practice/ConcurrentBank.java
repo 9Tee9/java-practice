@@ -19,8 +19,18 @@ public class ConcurrentBank {
     }
 
     public void transfer(BankAccount fromAccount, BankAccount toAccount, BigDecimal amount) {
-        synchronized (fromAccount) {
-            synchronized (toAccount) {
+        BankAccount firstLock;
+        BankAccount secondLock;
+
+        if (fromAccount.getAccountNumber().compareTo(toAccount.getAccountNumber()) < 0) {
+            firstLock = fromAccount;
+            secondLock = toAccount;
+        } else {
+            firstLock = toAccount;
+            secondLock = fromAccount;
+        }
+        synchronized (firstLock) {
+            synchronized (secondLock) {
                 if (fromAccount.withdraw(amount)) {
                     toAccount.deposit(amount);
                     System.out.println("Transferred " + amount + " from account " + fromAccount.getAccountNumber() +
