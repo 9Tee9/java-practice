@@ -2,7 +2,9 @@ package org.polina.practice.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.polina.practice.entity.Order;
 import org.polina.practice.entity.User;
+import org.polina.practice.exception.OrderNotFoundException;
 import org.polina.practice.exception.UserNotFoundException;
 import org.polina.practice.repository.UserRepository;
 import org.polina.practice.service.UserService;
@@ -48,6 +50,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(MessageFormat
+                        .format("Пользователь с ID {0} не найден!", id)));
+        userRepository.deleteById(user.getId());
     }
 }

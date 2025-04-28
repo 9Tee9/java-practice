@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.polina.practice.views.Views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,16 +19,17 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(Views.Summary.class)
+    @JsonView({Views.UserSummary.class, Views.OrderSummary.class})
     private Long id;
-    @JsonView(Views.Summary.class)
     @NotBlank(message = "Имя должно быть указано")
+    @JsonView({Views.UserSummary.class, Views.OrderDetails.class})
     private String name;
-    @JsonView(Views.Summary.class)
+    @JsonView({Views.UserSummary.class, Views.OrderDetails.class})
     @NotBlank(message = "Email должен быть указан")
     @Email(message = "Невалидный формат email")
     private String email;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Views.Details.class)
-    private List<Order> orders;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonView(Views.UserDetails.class)
+    private List<Order> orders = new ArrayList<>();
 }
