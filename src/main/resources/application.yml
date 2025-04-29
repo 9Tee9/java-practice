@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    open-in-view: false
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:postgresql://localhost:5432/library_db
+    username: postgres
+    password: postgres
+    hikari:
+      schema: library_schema
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS library_schema
+      connection-timeout: 10000
