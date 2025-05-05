@@ -37,106 +37,100 @@ public class BookControllerTest {
 
     private Book testBook;
     private Author testAuthor;
-    private BookResponse expectedBookResponse;
-    private BookListResponse expectedBookListResponse;
 
     @BeforeEach
     void setUp() {
         bookController = new BookController(bookService, bookMapper);
         testAuthor = new Author(1L, "J.K. Rowling", "Bio", Collections.emptyList());
         testBook = new Book(1L, "Harry Potter", "Description", List.of(testAuthor));
-
-        expectedBookResponse = new BookResponse();
-        expectedBookResponse.setTitle("Harry Potter");
-        expectedBookResponse.setDescription("Description");
-        expectedBookResponse.setAuthors(List.of("J.K. Rowling"));
-
-        expectedBookListResponse = new BookListResponse();
-        expectedBookListResponse.setBooks(List.of(expectedBookResponse));
-        expectedBookListResponse.setPageNumber(0);
-        expectedBookListResponse.setPageSize(5);
     }
 
     @Test
-    void whenGetAllBooks_thenReturnBookListResponse() throws Exception {
+    void whenGetAllBooks_thenReturnPageOfBooks() {
         Pageable pageable = Pageable.unpaged();
         Page<Book> bookPage = new PageImpl<>(List.of(testBook));
 
         when(bookService.getAllBooks(pageable)).thenReturn(bookPage);
-        when(bookMapper.pageToBookListResponse(bookPage)).thenReturn(expectedBookListResponse);
 
-        ResponseEntity<BookListResponse> response = bookController.getAllBooks(pageable);
+        ResponseEntity<Page<Book>> response = bookController.getAllBooks(pageable);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookListResponse, response.getBody());
+        assertNotNull(response.getBody());
+        assertEquals(bookPage, response.getBody());
 
         verify(bookService, times(1)).getAllBooks(pageable);
-        verify(bookMapper, times(1)).pageToBookListResponse(bookPage);
-
     }
 
     @Test
-    void whenGetBookById_thenReturnBook() throws Exception {
+    void whenGetBookById_thenReturnBook() {
         when(bookService.getBookById(1L)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse);
+        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
 
         ResponseEntity<BookResponse> response = bookController.getBookById(1L);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookResponse, response.getBody());
+        assertEquals(expectedBookResponse(), response.getBody());
 
         verify(bookService, times(1)).getBookById(1L);
         verify(bookMapper, times(1)).bookToBookResponse(testBook);
     }
 
     @Test
-    void whenAddBook_thenReturnCreatedBook() throws Exception {
+    void whenAddBook_thenReturnCreatedBook() {
         AddBookRequest request = new AddBookRequest();
         request.setTitle("New Book");
         request.setDescription("New Description");
         request.setAuthorIds(List.of(1L));
 
         when(bookService.addBook(request)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse);
+        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
 
         ResponseEntity<BookResponse> response = bookController.addBook(request);
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(expectedBookResponse, response.getBody());
+        assertEquals(expectedBookResponse(), response.getBody());
 
         verify(bookService, times(1)).addBook(request);
         verify(bookMapper, times(1)).bookToBookResponse(testBook);
     }
 
     @Test
-    void whenUpdateBook_thenReturnUpdatedBook() throws Exception {
+    void whenUpdateBook_thenReturnUpdatedBook() {
         UpdateBookRequest request = new UpdateBookRequest();
         request.setTitle("Updated Title");
         request.setDescription("Updated Description");
 
         when(bookService.updateBook(1L, request)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse);
+        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
 
         ResponseEntity<BookResponse> response = bookController.updateBook(1L, request);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookResponse, response.getBody());
+        assertEquals(expectedBookResponse(), response.getBody());
 
         verify(bookService, times(1)).updateBook(1L, request);
         verify(bookMapper, times(1)).bookToBookResponse(testBook);
     }
 
     @Test
-    void whenDeleteBookById_thenReturnNoContent() throws Exception {
+    void whenDeleteBookById_thenReturnNoContent() {
         ResponseEntity<Void> response = bookController.deleteBookById(1L);
 
         assertNotNull(response);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
         verify(bookService, times(1)).deleteBookById(1L);
+    }
+
+    private BookResponse expectedBookResponse() {
+        BookResponse response = new BookResponse();
+        response.setTitle("Harry Potter");
+        response.setDescription("Description");
+        response.setAuthors(List.of("J.K. Rowling"));
+        return response;
     }
 }
