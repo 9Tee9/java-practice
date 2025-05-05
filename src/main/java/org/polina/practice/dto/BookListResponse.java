@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookListResponse {
-        private List<BookResponse> books = new ArrayList<>();
-        private int pageNumber;
-        private int pageSize;
-    }
+    private List<BookResponse> books = new ArrayList<>();
+    private int pageNumber;
+    private int pageSize;
+}

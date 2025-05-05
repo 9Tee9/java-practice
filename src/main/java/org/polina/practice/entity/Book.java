@@ -1,36 +1,32 @@
 package org.polina.practice.entity;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.polina.practice.views.Views;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "books")
+@Table(name = "books", schema = "library_schema")
 @Data
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({Views.AuthorSummary.class, Views.BookSummary.class})
     private Long id;
     @Column(length = 100)
-    @JsonView({Views.AuthorSummary.class, Views.BookSummary.class})
     private String title;
     @Column(length = 500)
-    @JsonView(Views.BookSummary.class)
     private String description;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "book_authors",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id")
     )
-    @JsonView(Views.BookDetails.class)
+    @JsonBackReference
     private List<Author> authors = new ArrayList<>();
 }

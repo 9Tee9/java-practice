@@ -3,45 +3,63 @@ package org.polina.practice.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.polina.practice.entity.Author;
 import org.polina.practice.repository.AuthorRepository;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import java.util.Collections;
+import java.util.List;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthorControllerTest {
     @Mock
     private AuthorRepository authorRepository;
 
-    @InjectMocks
     private AuthorController authorController;
 
-    private MockMvc mockMvc;
+    private Author author1;
+    private Author author2;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(authorController).build();
+        authorController = new AuthorController(authorRepository);
+        author1 = new Author(1L, "Author 1", "Bio", Collections.emptyList());
+        author2 = new Author(2L, "Author 2", "Bio2", Collections.emptyList());
     }
 
     @Test
-    void getAllAuthors_ReturnsListOfAuthors() throws Exception {
-        when(authorRepository.findAll()).thenReturn(Collections.emptyList());
+    void whenGetAllAuthors_thenReturnListOfAuthors() throws Exception {
+        List<Author> expectedAuthors = List.of(author1, author2);
+        when(authorRepository.findAll()).thenReturn(expectedAuthors);
 
-        mockMvc.perform(get("/api/v1/author/all"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+        ResponseEntity<List<Author>> response = authorController.getAllAuthors();
 
-        Mockito.verify(authorRepository, times(1)).findAll();
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        List<Author> actualAuthors = response.getBody();
+        assertNotNull(actualAuthors);
+        assertEquals(expectedAuthors.size(), actualAuthors.size());
+
+        Author returnedAuthor1 = actualAuthors.getFirst();
+        assertEquals(expectedAuthors.getFirst().getId(), returnedAuthor1.getId());
+        assertEquals(expectedAuthors.getFirst().getName(), returnedAuthor1.getName());
+        assertEquals(expectedAuthors.getFirst().getBio(), returnedAuthor1.getBio());
+        assertEquals(expectedAuthors.get(0).getBooks(), returnedAuthor1.getBooks());
+
+        Author returnedAuthor2 = actualAuthors.get(1);
+        assertEquals(expectedAuthors.get(1).getId(), returnedAuthor2.getId());
+        assertEquals(expectedAuthors.get(1).getName(), returnedAuthor2.getName());
+        assertEquals(expectedAuthors.get(1).getBio(), returnedAuthor2.getBio());
+        assertEquals(expectedAuthors.get(1).getBooks(), returnedAuthor2.getBooks());
+
+        verify(authorRepository, times(1)).findAll();
+        verifyNoMoreInteractions(authorRepository);
     }
 }
