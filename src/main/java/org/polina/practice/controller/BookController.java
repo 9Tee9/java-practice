@@ -25,10 +25,8 @@ public class BookController {
     private final BookMapper bookMapper;
 
     @GetMapping("/all")
-    public ResponseEntity<BookListResponse> getAllBooks(@PageableDefault(size = 5, sort = "title") Pageable pageable) {
-        Page<Book> bookPage = bookService.getAllBooks(pageable);
-        BookListResponse response = bookMapper.pageToBookListResponse(bookPage);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<Page<Book>> getAllBooks(@PageableDefault(size = 5, sort = "title") Pageable pageable) {
+        return ResponseEntity.ok().body(bookService.getAllBooks(pageable));
     }
 
     @GetMapping("/{id}")
