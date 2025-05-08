@@ -19,7 +19,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final JWTUtils jwtUtils;
-    private OurUserDetailedService ourUserDetailedService;
+    private final OurUserDetailedService ourUserDetailedService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {

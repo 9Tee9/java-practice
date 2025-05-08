@@ -1,6 +1,7 @@
 package org.polina.practice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.polina.practice.dto.RefreshTokenRequest;
 import org.polina.practice.utils.JWTUtils;
 import org.polina.practice.service.impl.OurUserDetailedService;
 import org.polina.practice.dto.AuthRequest;
@@ -45,13 +46,13 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestBody String refreshToken) {
-        String username = jwtUtils.extractUsername(refreshToken);
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshToken) {
+        String username = jwtUtils.extractUsername(refreshToken.getRefreshToken());
         UserDetails userDetails = ourUserDetailedService.loadUserByUsername(username);
 
-        if (jwtUtils.isTokenValid(refreshToken, userDetails)) {
+        if (jwtUtils.isTokenValid(refreshToken.getRefreshToken(), userDetails)) {
             String newJwt = jwtUtils.generateToken(userDetails);
-            return ResponseEntity.ok(new AuthResponse(newJwt, refreshToken));
+            return ResponseEntity.ok(new AuthResponse(newJwt, refreshToken.getRefreshToken()));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new AuthResponse("Invalid refresh token", null));

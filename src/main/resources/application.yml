@@ -27,3 +27,6 @@ logging:
   file:
     name: logs/application.log
     path: logs
+app:
+  jwt:
+    secret: this is very very very secure-secret 1234567890

@@ -27,13 +27,14 @@ public class User implements UserDetails {
     private boolean isAccountNonLocked = true;
     private int failedAttempts;
 
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     public enum Role {
-        USER,
-        MODERATOR,
-        SUPER_ADMIN
+        ROLE_USER,
+        ROLE_MODERATOR,
+        ROLE_SUPER_ADMIN
     }
 }

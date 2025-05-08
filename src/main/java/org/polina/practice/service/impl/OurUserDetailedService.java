@@ -35,11 +35,6 @@ public class OurUserDetailedService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void resetFailedAttempts(User user) {
-        user.setFailedAttempts(0);
-        user.setAccountNonLocked(true);
-        userRepository.save(user);
-    }
     public void unlockUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
