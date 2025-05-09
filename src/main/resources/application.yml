@@ -1,14 +1,25 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Ov23liWpxzyywi4LT184
+            client-secret: fc3b23bc128f33ef8a349cc1ac059f82d6f3052a
+            scope: user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
   jpa:
     open-in-view: false
     generate-ddl: true
     hibernate:
       ddl-auto: create
   datasource:
-    url: jdbc:postgresql://localhost:5432/library_db
+    url: jdbc:postgresql://localhost:5432/users_db
     username: postgres
     password: postgres
     hikari:
-      schema: library_schema
-      connection-init-sql: CREATE SCHEMA IF NOT EXISTS library_schema
       connection-timeout: 10000
+
+admin:
+  email: polina-demida@rambler.ru

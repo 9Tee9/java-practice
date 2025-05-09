@@ -7,6 +7,4 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=library_db
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - POSTGRES_DB=users_db
