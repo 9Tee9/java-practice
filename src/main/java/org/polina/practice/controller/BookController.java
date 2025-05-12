@@ -1,45 +1,37 @@
 package org.polina.practice.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.polina.practice.dto.AddBookRequest;
-import org.polina.practice.dto.BookListResponse;
-import org.polina.practice.dto.BookResponse;
-import org.polina.practice.dto.UpdateBookRequest;
 import org.polina.practice.entity.Book;
-import org.polina.practice.mapper.BookMapper;
 import org.polina.practice.service.BookService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/book")
+@RequestMapping("/api/book")
 public class BookController {
 
     private final BookService bookService;
-    private final BookMapper bookMapper;
 
     @GetMapping("/all")
-    public ResponseEntity<Page<Book>> getAllBooks(@PageableDefault(size = 5, sort = "title") Pageable pageable) {
-        return ResponseEntity.ok().body(bookService.getAllBooks(pageable));
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return ResponseEntity.ok(bookService.getAllBooks());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookResponse> getBookById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(bookMapper.bookToBookResponse(bookService.getBookById(id)));
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookById(id));
     }
     @PostMapping
-    public ResponseEntity<BookResponse> addBook(@RequestBody @Valid AddBookRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookMapper.bookToBookResponse(bookService.addBook(request)));
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.addBook(book));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponse> updateBook(@PathVariable Long id, @RequestBody @Valid UpdateBookRequest request) {
-        return ResponseEntity.ok(bookMapper.bookToBookResponse(bookService.updateBook(id, request)));
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        return ResponseEntity.ok(bookService.updateBook(id, book));
     }
 
     @DeleteMapping("/{id}")

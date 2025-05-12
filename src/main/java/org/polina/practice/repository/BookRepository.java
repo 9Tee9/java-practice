@@ -1,12 +1,15 @@
 package org.polina.practice.repository;
 
-import org.polina.practice.entity.Book;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository <Book> {
+    List<Book> findAll();
+    Optional<Book> findById(Long id);
+    Book save (Book book);
+    Book update (Long id, Book book);
+    void delete(Long id);
 }

@@ -1,32 +1,25 @@
 package org.polina.practice.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.polina.practice.dto.AddBookRequest;
-import org.polina.practice.dto.UpdateBookRequest;
-import org.polina.practice.entity.Author;
 import org.polina.practice.entity.Book;
-import org.polina.practice.exception.AuthorNotFoundException;
 import org.polina.practice.exception.BookNotFoundException;
-import org.polina.practice.repository.AuthorRepository;
 import org.polina.practice.repository.BookRepository;
 import org.polina.practice.service.BookService;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.data.domain.Pageable;
 import java.text.MessageFormat;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
-    private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
+
+    private final BookRepository<Book> bookRepository;
 
     @Override
-    public Page<Book> getAllBooks(Pageable pageable) {
-        return bookRepository.findAll(pageable);
+    public List<Book> getAllBooks() {
+        return bookRepository.findAll();
     }
 
     @Override
@@ -38,27 +31,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book addBook(AddBookRequest request) {
-        List<Author> authors = authorRepository.findAllById(request.getAuthorIds());
-        if (authors.size() != (request.getAuthorIds().size())) {
-            throw new AuthorNotFoundException("Один или несколько авторов не найдены!");
-        }
+    public Book addBook(Book book) {
         Book newBook = new Book();
-        newBook.setTitle(request.getTitle());
-        newBook.setDescription(request.getDescription());
-        newBook.setAuthors(authors);
+        newBook.setTitle(book.getTitle());
+        newBook.setAuthor(book.getAuthor());
+        newBook.setPublicationYear(book.getPublicationYear());
         return bookRepository.save(newBook);
     }
 
     @Override
     @Transactional
-    public Book updateBook(Long id, UpdateBookRequest request) {
-        Book updatedBook = bookRepository.findById(id).orElseThrow(()->
-                new BookNotFoundException(MessageFormat
-                        .format("Книга с id {0} не найдена!", id)));
-        updatedBook.setTitle(request.getTitle());
-        updatedBook.setDescription(request.getDescription());
-        return bookRepository.save(updatedBook);
+    public Book updateBook(Long id, Book book) {
+        return bookRepository.update(id, book);
     }
 
     @Override
@@ -67,10 +51,6 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(()->
                 new BookNotFoundException(MessageFormat
                         .format("Книга с id {0} не найдена!", id)));
-        List<Author> authors = book.getAuthors();
-        authors.stream()
-                .peek(author -> author.getBooks().remove(book))
-                .forEach(authorRepository::save);
-        bookRepository.deleteById(id);
+        bookRepository.delete(book.getId());
     }
 }

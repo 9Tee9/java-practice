@@ -1,136 +1,139 @@
 package org.polina.practice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.polina.practice.dto.AddBookRequest;
-import org.polina.practice.dto.BookListResponse;
-import org.polina.practice.dto.BookResponse;
-import org.polina.practice.dto.UpdateBookRequest;
-import org.polina.practice.entity.Author;
 import org.polina.practice.entity.Book;
-import org.polina.practice.mapper.BookMapper;
 import org.polina.practice.service.BookService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import java.util.Collections;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @ExtendWith(MockitoExtension.class)
 public class BookControllerTest {
+
+    private MockMvc mockMvc;
     @Mock
     private BookService bookService;
-
-    @Mock
-    private BookMapper bookMapper;
-
+    @InjectMocks
     private BookController bookController;
+    private ObjectMapper objectMapper;
 
-    private Book testBook;
-    private Author testAuthor;
+    private Book book1;
+    private Book book2;
 
     @BeforeEach
-    void setUp() {
-        bookController = new BookController(bookService, bookMapper);
-        testAuthor = new Author(1L, "J.K. Rowling", "Bio", Collections.emptyList());
-        testBook = new Book(1L, "Harry Potter", "Description", List.of(testAuthor));
+    public void setUp() {
+        objectMapper = new ObjectMapper();
+        mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
+        book1 = new Book(1L, "Book One", "Author One", 2021);
+        book2 = new Book(2L, "Book Two", "Author Two", 2022);
     }
 
     @Test
-    void whenGetAllBooks_thenReturnPageOfBooks() {
-        Pageable pageable = Pageable.unpaged();
-        Page<Book> bookPage = new PageImpl<>(List.of(testBook));
+    public void whenGetAllBooks_thenReturnListOfBooks() throws Exception {
+        List<Book> books = Arrays.asList(book1, book2);
+        when(bookService.getAllBooks()).thenReturn(books);
 
-        when(bookService.getAllBooks(pageable)).thenReturn(bookPage);
+        mockMvc.perform(get("/api/book/all"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].title").value("Book One"))
+                .andExpect(jsonPath("$[0].author").value("Author One"))
+                .andExpect(jsonPath("$[0].publicationYear").value(2021))
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].title").value("Book Two"))
+                .andExpect(jsonPath("$[1].author").value("Author Two"))
+                .andExpect(jsonPath("$[1].publicationYear").value(2022));
 
-        ResponseEntity<Page<Book>> response = bookController.getAllBooks(pageable);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(bookPage, response.getBody());
-
-        verify(bookService, times(1)).getAllBooks(pageable);
+        verify(bookService, times(1)).getAllBooks();
     }
 
     @Test
-    void whenGetBookById_thenReturnBook() {
-        when(bookService.getBookById(1L)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
+    public void whenGetBookById_thenReturnBook() throws Exception {
+        when(bookService.getBookById(1L)).thenReturn(book1);
 
-        ResponseEntity<BookResponse> response = bookController.getBookById(1L);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookResponse(), response.getBody());
+        mockMvc.perform(get("/api/book/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Book One"))
+                .andExpect(jsonPath("$.author").value("Author One"))
+                .andExpect(jsonPath("$.publicationYear").value(2021));
 
         verify(bookService, times(1)).getBookById(1L);
-        verify(bookMapper, times(1)).bookToBookResponse(testBook);
     }
 
     @Test
-    void whenAddBook_thenReturnCreatedBook() {
-        AddBookRequest request = new AddBookRequest();
-        request.setTitle("New Book");
-        request.setDescription("New Description");
-        request.setAuthorIds(List.of(1L));
+    public void whenAddBook_thenReturnAddedBook() throws Exception {
+        when(bookService.addBook(any(Book.class))).thenReturn(book1);
 
-        when(bookService.addBook(request)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
+        mockMvc.perform(post("/api/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                "title" : "Book One",
+                                "author" : "Author One",
+                                "publicationYear" : 2021
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Book One"))
+                .andExpect(jsonPath("$.author").value("Author One"))
+                .andExpect(jsonPath("$.publicationYear").value(2021));
 
-        ResponseEntity<BookResponse> response = bookController.addBook(request);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(expectedBookResponse(), response.getBody());
-
-        verify(bookService, times(1)).addBook(request);
-        verify(bookMapper, times(1)).bookToBookResponse(testBook);
+        verify(bookService, times(1)).addBook(any(Book.class));
     }
 
     @Test
-    void whenUpdateBook_thenReturnUpdatedBook() {
-        UpdateBookRequest request = new UpdateBookRequest();
-        request.setTitle("Updated Title");
-        request.setDescription("Updated Description");
+    public void whenUpdateBook_thenReturnUpdatedBook() throws Exception {
+        Book updatedBook = new Book(1L, "Updated Book One", "Updated Author", 2010);
+        when(bookService.updateBook(eq(1L), any(Book.class))).thenReturn(updatedBook);
 
-        when(bookService.updateBook(1L, request)).thenReturn(testBook);
-        when(bookMapper.bookToBookResponse(testBook)).thenReturn(expectedBookResponse());
+        mockMvc.perform(put("/api/book/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                "title" : "Updated Book One",
+                                "author" : "Updated Author",
+                                "publicationYear" : 2010
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Updated Book One"))
+                .andExpect(jsonPath("$.author").value("Updated Author"))
+                .andExpect(jsonPath("$.publicationYear").value(2010));
 
-        ResponseEntity<BookResponse> response = bookController.updateBook(1L, request);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedBookResponse(), response.getBody());
-
-        verify(bookService, times(1)).updateBook(1L, request);
-        verify(bookMapper, times(1)).bookToBookResponse(testBook);
+        verify(bookService, times(1)).updateBook(eq(1L), any(Book.class));
     }
 
     @Test
-    void whenDeleteBookById_thenReturnNoContent() {
-        ResponseEntity<Void> response = bookController.deleteBookById(1L);
+    public void whenDeleteBookById_thenReturnNoContent() throws Exception {
+        doNothing().when(bookService).deleteBookById(1L);
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        mockMvc.perform(delete("/api/book/1"))
+                .andExpect(status().isNoContent());
 
         verify(bookService, times(1)).deleteBookById(1L);
-    }
-
-    private BookResponse expectedBookResponse() {
-        BookResponse response = new BookResponse();
-        response.setTitle("Harry Potter");
-        response.setDescription("Description");
-        response.setAuthors(List.of("J.K. Rowling"));
-        return response;
     }
 }
