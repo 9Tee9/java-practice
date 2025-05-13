@@ -1,8 +1,8 @@
 package org.polina.practice.controller;
 
 import org.polina.practice.dto.ErrorResponse;
-import org.polina.practice.exception.AuthorNotFoundException;
-import org.polina.practice.exception.BookNotFoundException;
+import org.polina.practice.exception.DepartmentNotFoundException;
+import org.polina.practice.exception.EmployeeNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ import java.util.List;
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
-    @ExceptionHandler(BookNotFoundException.class)
-    public ResponseEntity<ErrorResponse> bookNotFoundExceptionHandler(BookNotFoundException ex) {
+    @ExceptionHandler(DepartmentNotFoundException.class )
+    public ResponseEntity<ErrorResponse> departmentNotFoundExceptionHandler(DepartmentNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
     }
-    @ExceptionHandler(AuthorNotFoundException.class)
-    public ResponseEntity<ErrorResponse> authorNotFoundExceptionHandler(AuthorNotFoundException ex) {
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> employeeNotFoundExceptionHandler(EmployeeNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
     }

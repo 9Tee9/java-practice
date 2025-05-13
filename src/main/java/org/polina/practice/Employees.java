@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Library {
+public class Employees {
     public static void main(String[] args) {
-        SpringApplication.run(Library.class, args);
+        SpringApplication.run(Employees.class, args);
         }
     }

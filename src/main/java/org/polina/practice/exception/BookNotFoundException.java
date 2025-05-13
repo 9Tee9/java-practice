@@ -1,7 +1,0 @@
-package org.polina.practice.exception;
-
-public class BookNotFoundException extends RuntimeException{
-    public BookNotFoundException(String message) {
-        super(message);
-    }
-}
