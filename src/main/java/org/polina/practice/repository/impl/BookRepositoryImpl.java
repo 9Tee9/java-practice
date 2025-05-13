@@ -63,14 +63,16 @@ public class BookRepositoryImpl implements BookRepository<Book> {
 
     @Override
     public Book update(Long id, Book book) {
-        Book existedBook = findById(book.getId()).orElse(null);
+        Book existedBook = findById(id).orElse(null);
         if (existedBook != null) {
             String sql = "UPDATE books SET title=?, author=?, publication_year=? WHERE id=?";
-            jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
+            jdbcTemplate.update(sql, book.getTitle(), book.getAuthor(), book.getPublicationYear(), existedBook.getId());
+            book.setId(existedBook.getId());
             return book;
+        } else {
+            throw new BookNotFoundException(MessageFormat
+                    .format("Книга с ID {0} не найдена!", id));
         }
-        throw new BookNotFoundException(MessageFormat
-                .format("Книга с ID {0} не найдена!", book.getId()));
     }
 
     @Override

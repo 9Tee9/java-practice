@@ -15,10 +15,11 @@ public class ExceptionHandlerController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(ex.getLocalizedMessage()));
-    }
 }
+
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ErrorResponse> exceptionHandler(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(new ErrorResponse(ex.getLocalizedMessage()));
+//    }
+//}

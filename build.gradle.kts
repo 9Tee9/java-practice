@@ -19,7 +19,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    runtimeOnly("org.postgresql:postgresql")
+        // runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
 }
 
 tasks.test {
