@@ -1,51 +1,10 @@
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "2181" ]
-      interval: 60s
-      timeout: 50s
-      retries: 10
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka
-    depends_on:
-        zookeeper:
-          condition: service_healthy
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-    healthcheck:
-      test: [ "CMD", "kafka-topics", "--list", "--bootstrap-server", "kafka:9092" ]
-      interval: 60s
-      timeout: 50s
-      retries: 10
-
   orders-service:
     image: orders-service
     build:
       context: ./orders-service
-    depends_on:
-      kafka:
-        condition: service_healthy
     environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 193.233.193.42:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: order-group
     ports:
       - "8081:8081"
@@ -55,11 +14,8 @@ services:
     image: payment-service
     build:
       context: ./payment-service
-    depends_on:
-      kafka:
-        condition: service_healthy
     environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 193.233.193.42:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: payment-group
     ports:
       - "8082:8082"
@@ -69,11 +25,8 @@ services:
     image: shipping-service
     build:
       context: ./shipping-service
-    depends_on:
-      kafka:
-        condition: service_healthy
     environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 193.233.193.42:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: shipping-group
     ports:
       - "8083:8083"
@@ -82,11 +35,8 @@ services:
     image: notifications-service
     build:
       context: ./notifications-service
-    depends_on:
-      kafka:
-        condition: service_healthy
     environment:
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 193.233.193.42:9092
       SPRING_KAFKA_CONSUMER_GROUP_ID: notification-group
     ports:
       - "8084:8084"

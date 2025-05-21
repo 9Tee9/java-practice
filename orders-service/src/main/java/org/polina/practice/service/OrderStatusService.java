@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OrderStatusService {
 
-    @KafkaListener(topics = "payed_orders", groupId = "order-group", concurrency = "5")
+    @KafkaListener(topics = "payed_orders", groupId = "order-group", concurrency = "3")
     public void handlePayedOrder(Order order, Acknowledgment acknowledgment) {
         try {
             log.info("Получено уведомление об оплате заказа: {}", order);

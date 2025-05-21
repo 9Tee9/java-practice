@@ -1,5 +1,7 @@
 package org.polina.practice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.polina.practice.model.Order;
@@ -17,8 +19,8 @@ import java.util.Random;
 public class PaymentService {
     private final KafkaTemplate<String, Order> kafkaTemplate;
 
-    @KafkaListener(topics = "new_orders", groupId = "payment-group", concurrency = "5")
-    public void handlePayedOrder(Order order, Acknowledgment acknowledgment) {
+    @KafkaListener(topics = "new_orders", groupId = "payment-group", concurrency = "3")
+    public void handleNewOrder(Order order, Acknowledgment acknowledgment) {
         log.info("Получено уведомление об оплате заказа: {}", order);
         if (simulatePayment()) {
             order.setStatus(Status.PAID);
@@ -30,7 +32,6 @@ public class PaymentService {
             log.error("Оплата не удалась для заказа: {}", order.getId());
         }
     }
-
     private boolean simulatePayment() {
         Random random = new Random();
         return random.nextBoolean();

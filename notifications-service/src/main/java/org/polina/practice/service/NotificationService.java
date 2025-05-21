@@ -1,5 +1,6 @@
 package org.polina.practice.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.polina.practice.model.Order;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NotificationService {
 
-    @KafkaListener(topics = "sent_orders", groupId = "notification-group", concurrency = "5")
+    @KafkaListener(topics = "sent_orders", groupId = "notification-group", concurrency = "3")
     public void handleSentOrder(Order order, Acknowledgment acknowledgment) {
         try {
             log.info("Получен заказ для отправки уведомления: {}", order);

@@ -1,5 +1,7 @@
 package org.polina.practice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.polina.practice.model.Order;
@@ -17,7 +19,7 @@ import java.util.Random;
 public class ShippingService {
     private final KafkaTemplate<String, Order> kafkaTemplate;
 
-    @KafkaListener(topics = "payed_orders", groupId = "shipping-group", concurrency = "5")
+    @KafkaListener(topics = "payed_orders", groupId = "shipping-group", concurrency = "3")
     public void processShipping(Order order, Acknowledgment acknowledgment) {
         if (simulateShippingSuccess()) {
             order.setStatus(Status.SENT);

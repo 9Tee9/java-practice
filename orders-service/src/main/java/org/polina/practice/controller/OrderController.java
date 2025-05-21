@@ -8,10 +8,7 @@ import org.polina.practice.model.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -23,18 +20,19 @@ public class OrderController {
 
     private final KafkaTemplate<String, Order> kafkaTemplate;
 
-
     @PostMapping("/create")
     public ResponseEntity<String> createOrder(@RequestBody @Valid Order order) {
         try {
             log.info("Получен новый заказ: {}", order);
+            Order newOrder = new Order();
+            newOrder.setId(UUID.randomUUID());
+            newOrder.setStatus(Status.CREATED);
+            newOrder.setUserId(order.getUserId());
+            newOrder.setItems(order.getItems());
 
-            order.setId(UUID.randomUUID());
-            order.setStatus(Status.CREATED);
+            kafkaTemplate.send("new_orders", newOrder.getId().toString(), newOrder);
 
-            kafkaTemplate.send("new_orders", order.getId().toString(), order);
-
-            log.info("Заказ отправлен в Kafka. ID: {}", order.getId());
+            log.info("Заказ отправлен в Kafka. ID: {}", newOrder.getId());
             return ResponseEntity.ok("Заказ создан и отправлен на обработку.");
         } catch (Exception e) {
             log.error("Ошибка при создании заказа: {}", e.getMessage());
