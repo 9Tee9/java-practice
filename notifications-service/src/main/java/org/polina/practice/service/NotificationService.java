@@ -3,6 +3,7 @@ package org.polina.practice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.polina.practice.model.Order;
 import org.polina.practice.model.Status;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -14,9 +15,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NotificationService {
 
-    @KafkaListener(topics = "sent_orders", groupId = "notification-group", concurrency = "3")
-    public void handleSentOrder(Order order, Acknowledgment acknowledgment) {
+    @KafkaListener(topics = "sent_orders", groupId = "notification-group")
+    public void handleSentOrder(ConsumerRecord<String, Order> record, Acknowledgment acknowledgment) {
         try {
+            int partition = record.partition();
+            Order order = record.value();
+            System.out.println("Поток: " + Thread.currentThread().getName() +
+                    ", Партиция: " + partition);
             log.info("Получен заказ для отправки уведомления: {}", order);
             sendNotification(order);
             acknowledgment.acknowledge();

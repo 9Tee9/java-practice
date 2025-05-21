@@ -1,6 +1,10 @@
 spring:
   kafka:
+    topics:
+      partitions: 10
+      replication-factor: 1
     listener:
+      concurrency: 10
       ack-mode: MANUAL
     bootstrap-servers: 193.233.193.42:9092
     consumer:

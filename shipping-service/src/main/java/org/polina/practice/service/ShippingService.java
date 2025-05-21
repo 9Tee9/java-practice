@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.polina.practice.model.Order;
 import org.polina.practice.model.Status;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -19,8 +20,12 @@ import java.util.Random;
 public class ShippingService {
     private final KafkaTemplate<String, Order> kafkaTemplate;
 
-    @KafkaListener(topics = "payed_orders", groupId = "shipping-group", concurrency = "3")
-    public void processShipping(Order order, Acknowledgment acknowledgment) {
+    @KafkaListener(topics = "payed_orders", groupId = "shipping-group")
+    public void processShipping(ConsumerRecord<String, Order> record, Acknowledgment acknowledgment) {
+        int partition = record.partition();
+        Order order = record.value();
+        System.out.println("Поток: " + Thread.currentThread().getName() +
+                ", Партиция: " + partition);
         if (simulateShippingSuccess()) {
             order.setStatus(Status.SENT);
             log.info("Заказ успешно отправлен: {}", order.getId());
